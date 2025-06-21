@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-900 text-white;
+  }
+}
+
+@layer components {
+  .quantum-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  .circuit-grid {
+    background-image: 
+      linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  
+  .quantum-gate {
+    @apply bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg p-3 shadow-lg border border-blue-400/30;
+  }
+  
+  .quantum-wire {
+    @apply bg-gradient-to-r from-blue-400 to-purple-500 h-1 rounded-full;
+  }
+} 
