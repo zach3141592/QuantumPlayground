@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Zap, Settings, Play, Save, Download, Upload, Plus, Trash2, Brain, Lightbulb } from 'lucide-react'
+import { Zap, Settings, Play, Save, Brain, Lightbulb, Plus, RotateCcw, Copy, Download, X } from 'lucide-react'
 import CircuitCanvas from './components/CircuitCanvas'
 import GatePalette from './components/GatePalette'
 import PropertiesPanel from './components/PropertiesPanel'
+import CircuitPrompt from './components/CircuitPrompt'
 import { Circuit, Gate, GateType } from './types/circuit'
 import { analyzeCircuit, getCircuitSuggestions, CircuitAnalysis } from './services/openai'
 
@@ -23,6 +24,40 @@ function App() {
   const [analysis, setAnalysis] = useState<CircuitAnalysis | null>(null)
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [showAnalysis, setShowAnalysis] = useState(false)
+  const [showPrompt, setShowPrompt] = useState(false)
+  const [circuitHistory, setCircuitHistory] = useState<Circuit[]>([])
+  const [historyIndex, setHistoryIndex] = useState(-1)
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Delete' && selectedGate) {
+        e.preventDefault()
+        removeGate(selectedGate.id)
+        setSelectedGate(null)
+      } else if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        undo()
+      } else if (e.key === 'y' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        redo()
+      } else if (e.key === 'Escape') {
+        setSelectedGateType(null)
+        setSelectedGate(null)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedGate])
+
+  // Save circuit to history
+  const saveToHistory = (newCircuit: Circuit) => {
+    const newHistory = circuitHistory.slice(0, historyIndex + 1)
+    newHistory.push(newCircuit)
+    setCircuitHistory(newHistory)
+    setHistoryIndex(newHistory.length - 1)
+  }
 
   const addGate = (gateType: GateType, qubit: number, time: number) => {
     const newGate: Gate = {
@@ -33,26 +68,102 @@ function App() {
       parameters: {}
     }
     
-    setCircuit(prev => ({
-      ...prev,
-      gates: [...prev.gates, newGate]
-    }))
+    const newCircuit = {
+      ...circuit,
+      gates: [...circuit.gates, newGate]
+    }
+    
+    setCircuit(newCircuit)
+    saveToHistory(newCircuit)
   }
 
   const removeGate = (gateId: string) => {
-    setCircuit(prev => ({
-      ...prev,
-      gates: prev.gates.filter(gate => gate.id !== gateId)
-    }))
+    const newCircuit = {
+      ...circuit,
+      gates: circuit.gates.filter(gate => gate.id !== gateId)
+    }
+    
+    setCircuit(newCircuit)
+    saveToHistory(newCircuit)
+  }
+
+  const moveGate = (gateId: string, newQubit: number, newTime: number) => {
+    const newCircuit = {
+      ...circuit,
+      gates: circuit.gates.map(gate => 
+        gate.id === gateId 
+          ? { ...gate, qubit: newQubit, time: newTime }
+          : gate
+      )
+    }
+    
+    setCircuit(newCircuit)
+    saveToHistory(newCircuit)
   }
 
   const updateGate = (gateId: string, updates: Partial<Gate>) => {
-    setCircuit(prev => ({
-      ...prev,
-      gates: prev.gates.map(gate => 
+    const newCircuit = {
+      ...circuit,
+      gates: circuit.gates.map(gate => 
         gate.id === gateId ? { ...gate, ...updates } : gate
       )
-    }))
+    }
+    
+    setCircuit(newCircuit)
+    saveToHistory(newCircuit)
+  }
+
+  const undo = () => {
+    if (historyIndex > 0) {
+      setHistoryIndex(historyIndex - 1)
+      setCircuit(circuitHistory[historyIndex - 1])
+    }
+  }
+
+  const redo = () => {
+    if (historyIndex < circuitHistory.length - 1) {
+      setHistoryIndex(historyIndex + 1)
+      setCircuit(circuitHistory[historyIndex + 1])
+    }
+  }
+
+  const clearCircuit = () => {
+    const newCircuit = {
+      id: `circuit-${Date.now()}`,
+      name: 'New Circuit',
+      qubits: 2,
+      gates: [],
+      measurements: []
+    }
+    
+    setCircuit(newCircuit)
+    setSelectedGate(null)
+    setSelectedGateType(null)
+    saveToHistory(newCircuit)
+  }
+
+  const duplicateCircuit = () => {
+    const newCircuit = {
+      ...circuit,
+      id: `circuit-${Date.now()}`,
+      name: `${circuit.name} (Copy)`
+    }
+    
+    setCircuit(newCircuit)
+    saveToHistory(newCircuit)
+  }
+
+  const exportCircuit = () => {
+    const circuitData = JSON.stringify(circuit, null, 2)
+    const blob = new Blob([circuitData], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${circuit.name.replace(/\s+/g, '_')}.json`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
   }
 
   const runCircuit = async () => {
@@ -90,126 +201,254 @@ function App() {
     setSelectedGateType(gateType)
   }
 
+  const createNewCircuit = () => {
+    const newCircuit = {
+      id: `circuit-${Date.now()}`,
+      name: 'New Circuit',
+      qubits: 2,
+      gates: [],
+      measurements: []
+    }
+    
+    setCircuit(newCircuit)
+    setSelectedGate(null)
+    setSelectedGateType(null)
+    setShowPrompt(false)
+    saveToHistory(newCircuit)
+  }
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col">
       {/* Header */}
-      <header className="bg-gray-800 border-b border-gray-700">
+      <header className="header flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Zap className="h-8 w-8 text-blue-400" />
-              <h1 className="text-xl font-bold text-white">Quantum Circuit Designer</h1>
+              <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-lg">
+                <Zap className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-slate-100">Quantum Circuit Designer</h1>
+                <p className="text-sm text-slate-400">Interactive quantum computing platform</p>
+              </div>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              {/* Circuit Actions */}
+              <div className="hidden md:flex items-center space-x-2 border-r border-slate-600 pr-3">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={undo}
+                  disabled={historyIndex <= 0}
+                  className="btn-secondary flex items-center space-x-2"
+                  title="Undo (Ctrl+Z)"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  <span className="hidden sm:inline">Undo</span>
+                </motion.button>
+                
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={clearCircuit}
+                  className="btn-warning flex items-center space-x-2"
+                  title="Clear circuit"
+                >
+                  <X className="h-4 w-4" />
+                  <span className="hidden sm:inline">Clear</span>
+                </motion.button>
+                
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={duplicateCircuit}
+                  className="btn-secondary flex items-center space-x-2"
+                  title="Duplicate circuit"
+                >
+                  <Copy className="h-4 w-4" />
+                  <span className="hidden sm:inline">Duplicate</span>
+                </motion.button>
+                
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={exportCircuit}
+                  className="btn-secondary flex items-center space-x-2"
+                  title="Export circuit"
+                >
+                  <Download className="h-4 w-4" />
+                  <span className="hidden sm:inline">Export</span>
+                </motion.button>
+              </div>
+
+              {/* AI Features */}
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setShowPrompt(!showPrompt)}
+                disabled={isAnalyzing}
+                className="btn-success flex items-center space-x-2"
+              >
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">AI Generator</span>
+              </motion.button>
+              
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={analyzeCircuitWithAI}
                 disabled={isAnalyzing}
-                className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 px-4 py-2 rounded-lg transition-colors"
+                className="btn-purple flex items-center space-x-2"
               >
                 <Brain className="h-4 w-4" />
-                <span>{isAnalyzing ? 'Analyzing...' : 'AI Analysis'}</span>
+                <span className="hidden sm:inline">{isAnalyzing ? 'Analyzing...' : 'AI Analysis'}</span>
               </motion.button>
               
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={runCircuit}
                 disabled={isRunning}
-                className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 px-4 py-2 rounded-lg transition-colors"
+                className="btn-primary flex items-center space-x-2"
               >
                 <Play className="h-4 w-4" />
-                <span>{isRunning ? 'Running...' : 'Run Circuit'}</span>
+                <span className="hidden sm:inline">{isRunning ? 'Running...' : 'Run Circuit'}</span>
               </motion.button>
               
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center space-x-2 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="btn-secondary flex items-center space-x-2"
               >
                 <Save className="h-4 w-4" />
-                <span>Save</span>
+                <span className="hidden sm:inline">Save</span>
               </motion.button>
               
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center space-x-2 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="btn-secondary flex items-center space-x-2"
               >
                 <Settings className="h-4 w-4" />
-                <span>Settings</span>
+                <span className="hidden sm:inline">Settings</span>
               </motion.button>
             </div>
           </div>
         </div>
       </header>
 
+      {/* AI Circuit Generator Panel */}
+      {showPrompt && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          className="bg-slate-800 border-b border-slate-600 flex-shrink-0"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <CircuitPrompt
+              circuit={circuit}
+              onCircuitUpdate={setCircuit}
+              onNewCircuit={createNewCircuit}
+            />
+          </div>
+        </motion.div>
+      )}
+
       {/* AI Analysis Modal */}
       {showAnalysis && analysis && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto"
+            className="card max-w-4xl w-full max-h-[90vh] overflow-y-auto"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">AI Circuit Analysis</h2>
+            <div className="card-header flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-100 flex items-center">
+                <Brain className="w-5 h-5 mr-2 text-purple-400" />
+                AI Circuit Analysis
+              </h2>
               <button
                 onClick={() => setShowAnalysis(false)}
-                className="text-gray-400 hover:text-white"
+                className="text-slate-400 hover:text-slate-100 transition-colors"
               >
-                ✕
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
             
-            <div className="space-y-4">
-              <div className="bg-gray-700 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-white mb-2">Description</h3>
-                <p className="text-gray-300">{analysis.description}</p>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-white mb-2">Complexity</h3>
-                  <p className="text-gray-300">{analysis.complexity}</p>
+            <div className="card-body space-y-6">
+              <div className="panel">
+                <div className="panel-header">
+                  <h3 className="text-lg font-semibold text-slate-100">Description</h3>
                 </div>
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-white mb-2">Execution Time</h3>
-                  <p className="text-gray-300">{analysis.estimatedExecutionTime}</p>
+                <div className="panel-body">
+                  <p className="text-slate-300">{analysis.description}</p>
                 </div>
               </div>
               
-              <div className="bg-gray-700 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-white mb-2">Potential Applications</h3>
-                <ul className="list-disc list-inside text-gray-300">
-                  {analysis.potentialApplications.map((app, index) => (
-                    <li key={index}>{app}</li>
-                  ))}
-                </ul>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="panel">
+                  <div className="panel-header">
+                    <h3 className="text-lg font-semibold text-slate-100">Complexity</h3>
+                  </div>
+                  <div className="panel-body">
+                    <p className="text-slate-300">{analysis.complexity}</p>
+                  </div>
+                </div>
+                <div className="panel">
+                  <div className="panel-header">
+                    <h3 className="text-lg font-semibold text-slate-100">Execution Time</h3>
+                  </div>
+                  <div className="panel-body">
+                    <p className="text-slate-300">{analysis.estimatedExecutionTime}</p>
+                  </div>
+                </div>
               </div>
               
-              <div className="bg-gray-700 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-white mb-2">Optimization Suggestions</h3>
-                <ul className="list-disc list-inside text-gray-300">
-                  {analysis.optimizationSuggestions.map((suggestion, index) => (
-                    <li key={index}>{suggestion}</li>
-                  ))}
-                </ul>
+              <div className="panel">
+                <div className="panel-header">
+                  <h3 className="text-lg font-semibold text-slate-100">Potential Applications</h3>
+                </div>
+                <div className="panel-body">
+                  <ul className="list-disc list-inside text-slate-300 space-y-1">
+                    {analysis.potentialApplications.map((app, index) => (
+                      <li key={index}>{app}</li>
+                    ))}
+                  </ul>
+                </div>
               </div>
               
-              {suggestions.length > 0 && (
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-white mb-2 flex items-center">
-                    <Lightbulb className="w-5 h-5 mr-2 text-yellow-400" />
-                    AI Suggestions
-                  </h3>
-                  <ul className="list-disc list-inside text-gray-300">
-                    {suggestions.map((suggestion, index) => (
+              <div className="panel">
+                <div className="panel-header">
+                  <h3 className="text-lg font-semibold text-slate-100">Optimization Suggestions</h3>
+                </div>
+                <div className="panel-body">
+                  <ul className="list-disc list-inside text-slate-300 space-y-1">
+                    {analysis.optimizationSuggestions.map((suggestion, index) => (
                       <li key={index}>{suggestion}</li>
                     ))}
                   </ul>
+                </div>
+              </div>
+              
+              {suggestions.length > 0 && (
+                <div className="panel">
+                  <div className="panel-header">
+                    <h3 className="text-lg font-semibold text-slate-100 flex items-center">
+                      <Lightbulb className="w-5 h-5 mr-2 text-amber-400" />
+                      AI Suggestions
+                    </h3>
+                  </div>
+                  <div className="panel-body">
+                    <ul className="list-disc list-inside text-slate-300 space-y-1">
+                      {suggestions.map((suggestion, index) => (
+                        <li key={index}>{suggestion}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               )}
             </div>
@@ -218,33 +457,40 @@ function App() {
       )}
 
       {/* Main Content */}
-      <div className="flex h-[calc(100vh-4rem)]">
+      <div className="flex flex-1 min-h-0">
         {/* Left Sidebar - Gate Palette */}
-        <div className="w-64 bg-gray-800 border-r border-gray-700 p-4">
-          <GatePalette onGateSelect={handleGateSelect} />
+        <div className="w-80 sidebar flex-shrink-0">
+          <div className="h-full p-4">
+            <GatePalette onGateSelect={handleGateSelect} />
+          </div>
         </div>
 
         {/* Center - Circuit Canvas */}
-        <div className="flex-1 bg-gray-900 p-4">
-          <CircuitCanvas
-            circuit={circuit}
-            onGateAdd={addGate}
-            onGateRemove={removeGate}
-            onGateSelect={setSelectedGate}
-            selectedGate={selectedGate}
-            selectedGateType={selectedGateType}
-            onGateTypeSelect={setSelectedGateType}
-          />
+        <div className="flex-1 main-content flex-shrink-0">
+          <div className="h-full p-4">
+            <CircuitCanvas
+              circuit={circuit}
+              onGateAdd={addGate}
+              onGateRemove={removeGate}
+              onGateMove={moveGate}
+              onGateSelect={setSelectedGate}
+              selectedGate={selectedGate}
+              selectedGateType={selectedGateType}
+              onGateTypeSelect={setSelectedGateType}
+            />
+          </div>
         </div>
 
         {/* Right Sidebar - Properties Panel */}
-        <div className="w-80 bg-gray-800 border-l border-gray-700 p-4">
-          <PropertiesPanel
-            selectedGate={selectedGate}
-            onGateUpdate={updateGate}
-            circuit={circuit}
-            onCircuitUpdate={setCircuit}
-          />
+        <div className="w-96 sidebar flex-shrink-0">
+          <div className="h-full p-4">
+            <PropertiesPanel
+              selectedGate={selectedGate}
+              onGateUpdate={updateGate}
+              circuit={circuit}
+              onCircuitUpdate={setCircuit}
+            />
+          </div>
         </div>
       </div>
     </div>
