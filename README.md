@@ -1,8 +1,4 @@
-# Quantum Circuit Designer
-
-A modern, interactive web application for designing and visualizing quantum circuits. Built with React, TypeScript, and Tailwind CSS.
-
-## Features
+# cursor for building quantum circuits
 
 - **Interactive Circuit Design**: Drag and drop quantum gates onto a visual circuit canvas
 - **Gate Palette**: Comprehensive collection of quantum gates including:
@@ -143,12 +139,3 @@ VITE_OPENAI_API_KEY=your_openai_api_key_here
 ## License
 
 This project is licensed under the MIT License.
-
-## Future Enhancements
-
-- Circuit simulation with real quantum backends
-- Export to QASM format
-- Circuit optimization algorithms
-- Multi-circuit management
-- Collaboration features
-- Advanced visualization options
