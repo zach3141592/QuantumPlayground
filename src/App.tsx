@@ -218,67 +218,62 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-black text-white flex flex-col font-sans">
       {/* Header */}
       <header className="header flex-shrink-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-lg">
-                <Zap className="h-6 w-6 text-white" />
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14">
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded">
+                <Zap className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-slate-100">Quantum Circuit Designer</h1>
-                <p className="text-sm text-slate-400">Interactive quantum computing platform</p>
+                <h1 className="text-lg font-bold text-white tracking-tight">QuantumPlayground</h1>
               </div>
             </div>
             
             <div className="flex items-center space-x-2">
               {/* Circuit Actions */}
-              <div className="hidden md:flex items-center space-x-2 border-r border-slate-600 pr-3">
+              <div className="hidden md:flex items-center space-x-1 border-r border-neutral-800 pr-2 mr-2">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={undo}
                   disabled={historyIndex <= 0}
-                  className="btn-secondary flex items-center space-x-2"
+                  className="btn-ghost p-2"
                   title="Undo (Ctrl+Z)"
                 >
                   <RotateCcw className="h-4 w-4" />
-                  <span className="hidden sm:inline">Undo</span>
                 </motion.button>
                 
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={clearCircuit}
-                  className="btn-warning flex items-center space-x-2"
+                  className="btn-ghost p-2 hover:text-red-400"
                   title="Clear circuit"
                 >
                   <X className="h-4 w-4" />
-                  <span className="hidden sm:inline">Clear</span>
                 </motion.button>
                 
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={duplicateCircuit}
-                  className="btn-secondary flex items-center space-x-2"
+                  className="btn-ghost p-2"
                   title="Duplicate circuit"
                 >
                   <Copy className="h-4 w-4" />
-                  <span className="hidden sm:inline">Duplicate</span>
                 </motion.button>
                 
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={exportCircuit}
-                  className="btn-secondary flex items-center space-x-2"
+                  className="btn-ghost p-2"
                   title="Export circuit"
                 >
                   <Download className="h-4 w-4" />
-                  <span className="hidden sm:inline">Export</span>
                 </motion.button>
               </div>
 
@@ -288,9 +283,9 @@ function App() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowPrompt(!showPrompt)}
                 disabled={isAnalyzing}
-                className="btn-success flex items-center space-x-2"
+                className="btn-secondary text-sm h-9"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-3.5 w-3.5 mr-1.5" />
                 <span className="hidden sm:inline">AI Generator</span>
               </motion.button>
               
@@ -299,10 +294,10 @@ function App() {
                 whileTap={{ scale: 0.98 }}
                 onClick={analyzeCircuitWithAI}
                 disabled={isAnalyzing}
-                className="btn-purple flex items-center space-x-2"
+                className="btn-secondary text-sm h-9"
               >
-                <Brain className="h-4 w-4" />
-                <span className="hidden sm:inline">{isAnalyzing ? 'Analyzing...' : 'AI Analysis'}</span>
+                <Brain className="h-3.5 w-3.5 mr-1.5 text-blue-400" />
+                <span className="hidden sm:inline">{isAnalyzing ? 'Analyzing...' : 'Analyze'}</span>
               </motion.button>
               
               <motion.button
@@ -310,28 +305,18 @@ function App() {
                 whileTap={{ scale: 0.98 }}
                 onClick={runCircuit}
                 disabled={isRunning}
-                className="btn-primary flex items-center space-x-2"
+                className="btn-primary text-sm h-9"
               >
-                <Play className="h-4 w-4" />
-                <span className="hidden sm:inline">{isRunning ? 'Running...' : 'Run Circuit'}</span>
+                <Play className="h-3.5 w-3.5 mr-1.5" />
+                <span className="hidden sm:inline">{isRunning ? 'Running...' : 'Run'}</span>
               </motion.button>
               
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="btn-secondary flex items-center space-x-2"
-              >
-                <Save className="h-4 w-4" />
-                <span className="hidden sm:inline">Save</span>
-              </motion.button>
-              
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="btn-secondary flex items-center space-x-2"
+                className="btn-ghost p-2"
               >
                 <Settings className="h-4 w-4" />
-                <span className="hidden sm:inline">Settings</span>
               </motion.button>
             </div>
           </div>
@@ -344,7 +329,7 @@ function App() {
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
-          className="bg-slate-800 border-b border-slate-600 flex-shrink-0"
+          className="bg-neutral-900 border-b border-neutral-800 flex-shrink-0"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <CircuitPrompt
@@ -358,62 +343,60 @@ function App() {
 
       {/* AI Analysis Modal */}
       {showAnalysis && analysis && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="card max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+            className="card max-w-4xl w-full max-h-[90vh] overflow-y-auto border-neutral-800 bg-neutral-950"
           >
-            <div className="card-header flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-100 flex items-center">
-                <Brain className="w-5 h-5 mr-2 text-purple-400" />
-                AI Circuit Analysis
+            <div className="card-header flex items-center justify-between border-neutral-800">
+              <h2 className="text-lg font-bold text-white flex items-center">
+                <Brain className="w-5 h-5 mr-2 text-blue-500" />
+                Circuit Analysis
               </h2>
               <button
                 onClick={() => setShowAnalysis(false)}
-                className="text-slate-400 hover:text-slate-100 transition-colors"
+                className="text-neutral-400 hover:text-white transition-colors"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="w-5 h-5" />
               </button>
             </div>
             
             <div className="card-body space-y-6">
-              <div className="panel">
-                <div className="panel-header">
-                  <h3 className="text-lg font-semibold text-slate-100">Description</h3>
+              <div className="panel bg-neutral-900 border-neutral-800">
+                <div className="panel-header border-neutral-800">
+                  <h3 className="text-sm font-semibold text-white">Description</h3>
                 </div>
                 <div className="panel-body">
-                  <p className="text-slate-300">{analysis.description}</p>
+                  <p className="text-neutral-300 text-sm leading-relaxed">{analysis.description}</p>
                 </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="panel">
-                  <div className="panel-header">
-                    <h3 className="text-lg font-semibold text-slate-100">Complexity</h3>
+                <div className="panel bg-neutral-900 border-neutral-800">
+                  <div className="panel-header border-neutral-800">
+                    <h3 className="text-sm font-semibold text-white">Complexity</h3>
                   </div>
                   <div className="panel-body">
-                    <p className="text-slate-300">{analysis.complexity}</p>
+                    <p className="text-neutral-300 text-sm">{analysis.complexity}</p>
                   </div>
                 </div>
-                <div className="panel">
-                  <div className="panel-header">
-                    <h3 className="text-lg font-semibold text-slate-100">Execution Time</h3>
+                <div className="panel bg-neutral-900 border-neutral-800">
+                  <div className="panel-header border-neutral-800">
+                    <h3 className="text-sm font-semibold text-white">Execution Time</h3>
                   </div>
                   <div className="panel-body">
-                    <p className="text-slate-300">{analysis.estimatedExecutionTime}</p>
+                    <p className="text-neutral-300 text-sm">{analysis.estimatedExecutionTime}</p>
                   </div>
                 </div>
               </div>
               
-              <div className="panel">
-                <div className="panel-header">
-                  <h3 className="text-lg font-semibold text-slate-100">Potential Applications</h3>
+              <div className="panel bg-neutral-900 border-neutral-800">
+                <div className="panel-header border-neutral-800">
+                  <h3 className="text-sm font-semibold text-white">Potential Applications</h3>
                 </div>
                 <div className="panel-body">
-                  <ul className="list-disc list-inside text-slate-300 space-y-1">
+                  <ul className="list-disc list-inside text-neutral-300 text-sm space-y-1">
                     {analysis.potentialApplications.map((app, index) => (
                       <li key={index}>{app}</li>
                     ))}
@@ -421,12 +404,12 @@ function App() {
                 </div>
               </div>
               
-              <div className="panel">
-                <div className="panel-header">
-                  <h3 className="text-lg font-semibold text-slate-100">Optimization Suggestions</h3>
+              <div className="panel bg-neutral-900 border-neutral-800">
+                <div className="panel-header border-neutral-800">
+                  <h3 className="text-sm font-semibold text-white">Optimization Suggestions</h3>
                 </div>
                 <div className="panel-body">
-                  <ul className="list-disc list-inside text-slate-300 space-y-1">
+                  <ul className="list-disc list-inside text-neutral-300 text-sm space-y-1">
                     {analysis.optimizationSuggestions.map((suggestion, index) => (
                       <li key={index}>{suggestion}</li>
                     ))}
@@ -435,15 +418,15 @@ function App() {
               </div>
               
               {suggestions.length > 0 && (
-                <div className="panel">
-                  <div className="panel-header">
-                    <h3 className="text-lg font-semibold text-slate-100 flex items-center">
-                      <Lightbulb className="w-5 h-5 mr-2 text-amber-400" />
+                <div className="panel bg-neutral-900 border-neutral-800">
+                  <div className="panel-header border-neutral-800">
+                    <h3 className="text-sm font-semibold text-white flex items-center">
+                      <Lightbulb className="w-4 h-4 mr-2 text-blue-400" />
                       AI Suggestions
                     </h3>
                   </div>
                   <div className="panel-body">
-                    <ul className="list-disc list-inside text-slate-300 space-y-1">
+                    <ul className="list-disc list-inside text-neutral-300 text-sm space-y-1">
                       {suggestions.map((suggestion, index) => (
                         <li key={index}>{suggestion}</li>
                       ))}
@@ -457,17 +440,17 @@ function App() {
       )}
 
       {/* Main Content */}
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Left Sidebar - Gate Palette */}
-        <div className="w-80 sidebar flex-shrink-0">
+        <div className="w-72 sidebar flex-shrink-0 z-10">
           <div className="h-full p-4">
             <GatePalette onGateSelect={handleGateSelect} />
           </div>
         </div>
 
         {/* Center - Circuit Canvas */}
-        <div className="flex-1 main-content flex-shrink-0">
-          <div className="h-full p-4">
+        <div className="flex-1 main-content flex-shrink-0 relative">
+          <div className="absolute inset-0 p-4">
             <CircuitCanvas
               circuit={circuit}
               onGateAdd={addGate}
@@ -482,7 +465,7 @@ function App() {
         </div>
 
         {/* Right Sidebar - Properties Panel */}
-        <div className="w-96 sidebar flex-shrink-0">
+        <div className="w-80 sidebar flex-shrink-0 z-10">
           <div className="h-full p-4">
             <PropertiesPanel
               selectedGate={selectedGate}
@@ -497,4 +480,4 @@ function App() {
   )
 }
 
-export default App 
+export default App

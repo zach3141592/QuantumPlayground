@@ -82,12 +82,12 @@ export default function CircuitPrompt({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="flex items-center justify-center w-10 h-10 bg-purple-600 rounded-lg">
+          <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-lg">
             <Brain className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-100">AI Circuit Generator</h2>
-            <p className="text-sm text-slate-400">
+            <h2 className="text-xl font-bold text-white">AI Circuit Generator</h2>
+            <p className="text-sm text-neutral-400">
               Generate or modify quantum circuits using natural language
             </p>
           </div>
@@ -98,10 +98,10 @@ export default function CircuitPrompt({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setMode('new')}
-            className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+            className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 border ${
               mode === 'new'
-                ? 'bg-blue-600 text-white shadow-lg'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                ? 'bg-blue-600 text-white border-blue-500 shadow-lg'
+                : 'bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-700 hover:text-white'
             }`}
           >
             <Sparkles className="w-4 h-4 inline mr-2" />
@@ -112,10 +112,10 @@ export default function CircuitPrompt({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setMode('modify')}
-            className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+            className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 border ${
               mode === 'modify'
-                ? 'bg-green-600 text-white shadow-lg'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                ? 'bg-blue-600 text-white border-blue-500 shadow-lg'
+                : 'bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-700 hover:text-white'
             }`}
           >
             <RotateCcw className="w-4 h-4 inline mr-2" />
@@ -125,15 +125,15 @@ export default function CircuitPrompt({
       </div>
 
       {/* Mode Description */}
-      <div className="panel">
-        <div className="panel-header">
-          <h3 className="text-sm font-semibold text-slate-100 flex items-center">
-            <Lightbulb className="w-4 h-4 mr-2 text-amber-400" />
+      <div className="panel bg-neutral-900 border-neutral-800">
+        <div className="panel-header border-neutral-800 bg-neutral-900">
+          <h3 className="text-sm font-semibold text-white flex items-center">
+            <Lightbulb className="w-4 h-4 mr-2 text-blue-400" />
             {mode === 'new' ? 'Generate New Circuit' : 'Modify Current Circuit'}
           </h3>
         </div>
         <div className="panel-body">
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-neutral-300">
             {mode === 'new' 
               ? 'Describe the quantum circuit you want to create. Be specific about the gates, qubits, and operations you need.'
               : 'Describe how you want to modify the current circuit. The AI will update the existing circuit based on your request.'
@@ -154,7 +154,7 @@ export default function CircuitPrompt({
                 ? "e.g., 'Create a Bell state circuit with 2 qubits' or 'Generate a quantum teleportation circuit'"
                 : "e.g., 'Add a measurement gate to qubit 0' or 'Replace the H gate with an X gate'"
             }
-            className="w-full h-24 px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+            className="w-full h-24 px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all"
             disabled={isGenerating}
           />
           
@@ -163,7 +163,7 @@ export default function CircuitPrompt({
             whileTap={{ scale: 0.98 }}
             onClick={handleGenerate}
             disabled={isGenerating || !prompt.trim()}
-            className="absolute bottom-3 right-3 btn-purple"
+            className="absolute bottom-3 right-3 btn-primary"
           >
             {isGenerating ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -181,7 +181,7 @@ export default function CircuitPrompt({
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center space-x-2 p-3 bg-red-500/10 border border-red-500/20 rounded-lg"
+            className="flex items-center space-x-2 p-3 bg-red-900/20 border border-red-800/50 rounded-lg"
           >
             <AlertCircle className="w-5 h-5 text-red-400" />
             <span className="text-red-300 text-sm">{error}</span>
@@ -192,19 +192,19 @@ export default function CircuitPrompt({
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center space-x-2 p-3 bg-green-500/10 border border-green-500/20 rounded-lg"
+            className="flex items-center space-x-2 p-3 bg-blue-900/20 border border-blue-800/50 rounded-lg"
           >
-            <CheckCircle className="w-5 h-5 text-green-400" />
-            <span className="text-green-300 text-sm">{success}</span>
+            <CheckCircle className="w-5 h-5 text-blue-400" />
+            <span className="text-blue-300 text-sm">{success}</span>
           </motion.div>
         )}
       </div>
 
       {/* Example Prompts */}
-      <div className="panel">
-        <div className="panel-header">
-          <h3 className="text-sm font-semibold text-slate-100">Example Prompts</h3>
-          <p className="text-xs text-slate-400 mt-1">
+      <div className="panel bg-neutral-900 border-neutral-800">
+        <div className="panel-header border-neutral-800 bg-neutral-900">
+          <h3 className="text-sm font-semibold text-white">Example Prompts</h3>
+          <p className="text-xs text-neutral-500 mt-1">
             Click any example to try it out
           </p>
         </div>
@@ -217,9 +217,9 @@ export default function CircuitPrompt({
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleExampleClick(example)}
                 disabled={isGenerating}
-                className="text-left p-3 bg-slate-700/50 hover:bg-slate-700 border border-slate-600 rounded-lg transition-all duration-200 group"
+                className="text-left p-3 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded-lg transition-all duration-200 group"
               >
-                <div className="text-sm text-slate-300 group-hover:text-slate-100 transition-colors">
+                <div className="text-sm text-neutral-300 group-hover:text-white transition-colors">
                   {example}
                 </div>
               </motion.button>
@@ -229,15 +229,15 @@ export default function CircuitPrompt({
       </div>
 
       {/* Tips */}
-      <div className="panel">
-        <div className="panel-header">
-          <h3 className="text-sm font-semibold text-slate-100">Tips for Better Results</h3>
+      <div className="panel bg-neutral-900 border-neutral-800">
+        <div className="panel-header border-neutral-800 bg-neutral-900">
+          <h3 className="text-sm font-semibold text-white">Tips for Better Results</h3>
         </div>
         <div className="panel-body">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div className="space-y-2">
-              <h4 className="font-medium text-slate-200">For New Circuits:</h4>
-              <ul className="text-slate-400 space-y-1">
+              <h4 className="font-medium text-neutral-200">For New Circuits:</h4>
+              <ul className="text-neutral-400 space-y-1">
                 <li>• Specify the number of qubits needed</li>
                 <li>• Mention specific quantum gates (H, X, CNOT, etc.)</li>
                 <li>• Describe the desired quantum state or operation</li>
@@ -245,8 +245,8 @@ export default function CircuitPrompt({
               </ul>
             </div>
             <div className="space-y-2">
-              <h4 className="font-medium text-slate-200">For Modifications:</h4>
-              <ul className="text-slate-400 space-y-1">
+              <h4 className="font-medium text-neutral-200">For Modifications:</h4>
+              <ul className="text-neutral-400 space-y-1">
                 <li>• Be specific about which gates to change</li>
                 <li>• Mention qubit numbers and time steps</li>
                 <li>• Describe the desired outcome</li>
@@ -259,27 +259,27 @@ export default function CircuitPrompt({
 
       {/* Current Circuit Info (for modify mode) */}
       {mode === 'modify' && (
-        <div className="panel">
-          <div className="panel-header">
-            <h3 className="text-sm font-semibold text-slate-100">Current Circuit</h3>
+        <div className="panel bg-neutral-900 border-neutral-800">
+          <div className="panel-header border-neutral-800 bg-neutral-900">
+            <h3 className="text-sm font-semibold text-white">Current Circuit</h3>
           </div>
           <div className="panel-body">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div>
-                <div className="text-slate-400">Name</div>
-                <div className="text-slate-100 font-medium">{circuit.name}</div>
+                <div className="text-neutral-500">Name</div>
+                <div className="text-white font-medium">{circuit.name}</div>
               </div>
               <div>
-                <div className="text-slate-400">Qubits</div>
-                <div className="text-slate-100 font-medium">{circuit.qubits}</div>
+                <div className="text-neutral-500">Qubits</div>
+                <div className="text-white font-medium">{circuit.qubits}</div>
               </div>
               <div>
-                <div className="text-slate-400">Gates</div>
-                <div className="text-slate-100 font-medium">{circuit.gates.length}</div>
+                <div className="text-neutral-500">Gates</div>
+                <div className="text-white font-medium">{circuit.gates.length}</div>
               </div>
               <div>
-                <div className="text-slate-400">Depth</div>
-                <div className="text-slate-100 font-medium">
+                <div className="text-neutral-500">Depth</div>
+                <div className="text-white font-medium">
                   {circuit.gates.length > 0 ? Math.max(...circuit.gates.map(g => g.time)) + 1 : 0}
                 </div>
               </div>
@@ -289,4 +289,4 @@ export default function CircuitPrompt({
       )}
     </div>
   )
-} 
+}

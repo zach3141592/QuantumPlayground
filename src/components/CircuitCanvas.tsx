@@ -95,21 +95,8 @@ export default function CircuitCanvas({
     setDraggedGate(null)
   }
 
-  const getGateColor = (gateType: GateType) => {
-    const colors = {
-      H: 'bg-blue-500',
-      X: 'bg-red-500',
-      Y: 'bg-green-500',
-      Z: 'bg-purple-500',
-      CNOT: 'bg-amber-500',
-      SWAP: 'bg-pink-500',
-      RX: 'bg-indigo-500',
-      RY: 'bg-teal-500',
-      RZ: 'bg-orange-500',
-      PHASE: 'bg-cyan-500',
-      MEASURE: 'bg-slate-500'
-    }
-    return colors[gateType] || 'bg-slate-500'
+  const getGateClass = (gateType: GateType) => {
+    return `gate-${gateType} quantum-gate bg-neutral-800`
   }
 
   const getGateIcon = (gateType: GateType) => {
@@ -118,12 +105,12 @@ export default function CircuitCanvas({
       X: 'X',
       Y: 'Y',
       Z: 'Z',
-      CNOT: '⊕',
-      SWAP: '⇄',
+      CNOT: '+', // Changed from ⊕
+      SWAP: 'S', // Changed from ⇄ to S for simplicity or could use an icon
       RX: 'Rx',
       RY: 'Ry',
       RZ: 'Rz',
-      PHASE: 'θ',
+      PHASE: 'P', // Changed from θ
       MEASURE: 'M'
     }
     return icons[gateType] || '?'
@@ -138,48 +125,48 @@ export default function CircuitCanvas({
   }
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="panel-header">
+    <div className="h-full flex flex-col bg-neutral-900 rounded-lg overflow-hidden border border-neutral-800">
+      <div className="panel-header bg-neutral-900 border-neutral-800">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-slate-100">Circuit Canvas</h2>
-            <p className="text-sm text-slate-400 mt-1">
-              {selectedGateType ? `Selected: ${selectedGateType} gate - Click to place` : 'Click gates from the palette to add them'}
+            <h2 className="text-sm font-bold text-white uppercase tracking-wider">Circuit Canvas</h2>
+            <p className="text-xs text-neutral-500 mt-1">
+              {selectedGateType ? `Selected: ${selectedGateType} - Click to place` : 'Select gates from palette'}
             </p>
           </div>
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setShowGrid(!showGrid)}
-              className={`p-2 rounded-lg transition-colors ${
-                showGrid ? 'bg-slate-600 text-slate-100' : 'bg-slate-700 text-slate-400'
+              className={`p-1.5 rounded-md transition-colors ${
+                showGrid ? 'bg-neutral-800 text-white' : 'bg-transparent text-neutral-600 hover:text-neutral-400'
               }`}
               title="Toggle grid"
             >
               <Grid className="w-4 h-4" />
             </button>
-            <div className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">
+            <div className="text-xs text-neutral-500 bg-neutral-800 px-2 py-1 rounded border border-neutral-700">
               {circuit.gates.length} gates • {circuit.qubits} qubits
             </div>
           </div>
         </div>
       </div>
       
-      <div className="panel-body flex-1 relative overflow-hidden">
+      <div className="flex-1 relative overflow-hidden bg-black">
         <div
           ref={canvasRef}
           onClick={handleCanvasClick}
           onMouseMove={handleCanvasMouseMove}
           onMouseLeave={() => setHoveredCell(null)}
-          className="w-full h-full bg-slate-800 rounded-lg border-2 border-dashed border-slate-600 relative overflow-auto cursor-crosshair"
+          className="w-full h-full relative overflow-auto cursor-crosshair"
         >
           {/* Grid Background */}
           {showGrid && (
             <div 
-              className="absolute inset-0 pointer-events-none"
+              className="absolute inset-0 pointer-events-none opacity-20"
               style={{
                 backgroundImage: `
-                  linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-                  linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
+                  linear-gradient(#333 1px, transparent 1px),
+                  linear-gradient(90deg, #333 1px, transparent 1px)
                 `,
                 backgroundSize: '100px 80px'
               }}
@@ -187,11 +174,11 @@ export default function CircuitCanvas({
           )}
 
           {/* Qubit Labels */}
-          <div className="absolute left-0 top-0 w-16 h-full bg-slate-700/50 border-r border-slate-600 z-10">
+          <div className="absolute left-0 top-0 w-12 h-full bg-neutral-900/90 border-r border-neutral-800 z-10">
             {Array.from({ length: circuit.qubits }).map((_, qubit) => (
               <div
                 key={qubit}
-                className="flex items-center justify-center h-20 text-sm font-mono text-slate-300 border-b border-slate-600"
+                className="flex items-center justify-center h-20 text-xs font-mono text-neutral-500 border-b border-neutral-800/50"
               >
                 q{qubit}
               </div>
@@ -199,11 +186,11 @@ export default function CircuitCanvas({
           </div>
 
           {/* Time Labels */}
-          <div className="absolute left-16 top-0 w-full h-8 bg-slate-700/50 border-b border-slate-600 z-10">
+          <div className="absolute left-12 top-0 w-full h-6 bg-neutral-900/90 border-b border-neutral-800 z-10">
             {Array.from({ length: 20 }).map((_, time) => (
               <div
                 key={time}
-                className="absolute top-0 w-20 h-8 flex items-center justify-center text-xs font-mono text-slate-400"
+                className="absolute top-0 w-20 h-6 flex items-center justify-center text-[10px] font-mono text-neutral-600"
                 style={{ left: `${time * 100}px` }}
               >
                 {time}
@@ -215,7 +202,7 @@ export default function CircuitCanvas({
           {Array.from({ length: circuit.qubits }).map((_, qubit) => (
             <div
               key={qubit}
-              className="absolute left-16 right-0 quantum-wire"
+              className="absolute left-12 right-0 quantum-wire"
               style={{ top: `${qubit * 80 + 40}px` }}
             />
           ))}
@@ -224,8 +211,8 @@ export default function CircuitCanvas({
           {hoveredCell && selectedGateType && !isPositionOccupied(hoveredCell.qubit, hoveredCell.time) && (
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 0.3, scale: 1 }}
-              className={`absolute ${getGateColor(selectedGateType)} rounded-lg p-3 shadow-lg border-2 border-dashed border-white/50 pointer-events-none z-20`}
+              animate={{ opacity: 0.5, scale: 1 }}
+              className={`absolute border border-blue-500/50 bg-blue-500/10 rounded p-3 pointer-events-none z-20 flex items-center justify-center`}
               style={{
                 left: `${hoveredCell.time * 100 + 26}px`,
                 top: `${hoveredCell.qubit * 80 + 20}px`,
@@ -233,7 +220,7 @@ export default function CircuitCanvas({
                 height: '40px'
               }}
             >
-              <div className="text-white font-bold text-center opacity-50">
+              <div className="text-blue-400 font-bold text-center text-sm">
                 {getGateIcon(selectedGateType)}
               </div>
             </motion.div>
@@ -248,8 +235,8 @@ export default function CircuitCanvas({
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
                 whileHover={{ scale: 1.05 }}
-                className={`absolute ${getGateColor(gate.type)} rounded-lg p-3 shadow-lg border-2 border-white/20 cursor-move group transition-all duration-200 z-30 ${
-                  selectedGate?.id === gate.id ? 'ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-800' : ''
+                className={`absolute ${getGateClass(gate.type)} rounded p-3 cursor-move group transition-all duration-200 z-30 flex items-center justify-center ${
+                  selectedGate?.id === gate.id ? 'ring-1 ring-blue-500 border-blue-500' : ''
                 }`}
                 style={{
                   left: `${gate.time * 100 + 26}px`,
@@ -263,16 +250,16 @@ export default function CircuitCanvas({
                   onGateSelect(gate)
                 }}
               >
-                <div className="flex items-center justify-center h-full relative">
-                  <div className="text-white font-bold text-center">
+                <div className="flex items-center justify-center h-full relative w-full">
+                  <div className="text-white font-mono font-bold text-center text-sm">
                     {getGateIcon(gate.type)}
                   </div>
                   
-                  {/* Delete button - always visible but more prominent on hover */}
+                  {/* Delete button */}
                   <motion.button
-                    initial={{ opacity: 0.3, scale: 0.8 }}
+                    initial={{ opacity: 0, scale: 0.8 }}
                     whileHover={{ opacity: 1, scale: 1 }}
-                    className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg transition-all duration-200 z-40 group-hover:opacity-100"
+                    className="absolute -top-3 -right-3 bg-red-900 text-red-200 border border-red-700 rounded-full w-5 h-5 flex items-center justify-center shadow-sm z-40 opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={(e) => {
                       e.stopPropagation()
                       onGateRemove(gate.id)
@@ -280,27 +267,18 @@ export default function CircuitCanvas({
                         onGateSelect(null)
                       }
                     }}
-                    title="Delete gate (or press Delete key when selected)"
+                    title="Delete gate"
                   >
                     <X className="w-3 h-3" />
                   </motion.button>
                   
-                  {/* Move indicator */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    whileHover={{ opacity: 1 }}
-                    className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 text-slate-400"
-                  >
-                    <Move className="w-3 h-3" />
-                  </motion.div>
-
                   {/* Gate info on hover */}
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 5 }}
                     whileHover={{ opacity: 1, y: 0 }}
-                    className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-slate-800 text-slate-300 text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap z-50"
+                    className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-neutral-800 border border-neutral-700 text-neutral-300 text-[10px] px-2 py-1 rounded shadow-xl whitespace-nowrap z-50 pointer-events-none hidden group-hover:block"
                   >
-                    {gate.type} on q{gate.qubit} at t{gate.time}
+                    {gate.type} (q{gate.qubit}, t{gate.time})
                   </motion.div>
                 </div>
               </motion.div>
@@ -309,18 +287,12 @@ export default function CircuitCanvas({
 
           {/* Instructions overlay */}
           {circuit.gates.length === 0 && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-slate-400 max-w-md mx-auto">
-                <div className="text-4xl mb-4">⚛️</div>
-                <div className="text-lg font-medium mb-2">Empty Circuit</div>
-                <div className="text-sm mb-4">
-                  Select a gate from the palette and click on the grid to start building your quantum circuit
-                </div>
-                <div className="text-xs text-slate-500 space-y-1 bg-slate-800/50 p-3 rounded-lg">
-                  <div>• Click gates from the left panel to select them</div>
-                  <div>• Click on the grid to place gates</div>
-                  <div>• Drag gates to move them around</div>
-                  <div>• Hover over gates to see delete options</div>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="text-center text-neutral-600 max-w-sm mx-auto p-8 border border-neutral-800/50 rounded-xl bg-neutral-900/30 backdrop-blur-sm">
+                <Zap className="w-12 h-12 mx-auto mb-4 text-neutral-700" />
+                <div className="text-base font-medium mb-2 text-neutral-400">Start Building</div>
+                <div className="text-xs text-neutral-500">
+                  Select a gate from the palette and click on the grid to place it.
                 </div>
               </div>
             </div>
@@ -329,4 +301,4 @@ export default function CircuitCanvas({
       </div>
     </div>
   )
-} 
+}

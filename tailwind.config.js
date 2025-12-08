@@ -7,6 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
+        background: '#000000',
+        surface: '#111111',
+        surfaceHighlight: '#222222',
+        border: '#333333',
+        primary: '#3b82f6', // blue-500
+        primaryHover: '#2563eb', // blue-600
+        secondary: '#ffffff',
+        text: '#ffffff',
+        textMuted: '#a1a1aa', // zinc-400
         quantum: {
           50: '#f0f9ff',
           100: '#e0f2fe',
@@ -18,13 +27,13 @@ export default {
           700: '#0369a1',
           800: '#075985',
           900: '#0c4a6e',
+          950: '#082f49',
         }
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'bounce-slow': 'bounce 2s infinite',
       }
     },
   },
   plugins: [],
-} 
+}
