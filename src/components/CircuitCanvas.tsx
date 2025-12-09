@@ -212,7 +212,7 @@ export default function CircuitCanvas({
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 0.5, scale: 1 }}
-              className={`absolute border border-blue-500/50 bg-blue-500/10 rounded p-3 pointer-events-none z-20 flex items-center justify-center`}
+              className={`absolute border border-white/50 bg-white/10 rounded p-3 pointer-events-none z-20 flex items-center justify-center`}
               style={{
                 left: `${hoveredCell.time * 100 + 26}px`,
                 top: `${hoveredCell.qubit * 80 + 20}px`,
@@ -220,7 +220,7 @@ export default function CircuitCanvas({
                 height: '40px'
               }}
             >
-              <div className="text-blue-400 font-bold text-center text-sm">
+              <div className="text-neutral-300 font-bold text-center text-sm">
                 {getGateIcon(selectedGateType)}
               </div>
             </motion.div>
@@ -236,7 +236,7 @@ export default function CircuitCanvas({
                 exit={{ scale: 0, opacity: 0 }}
                 whileHover={{ scale: 1.05 }}
                 className={`absolute ${getGateClass(gate.type)} rounded p-3 cursor-move group transition-all duration-200 z-30 flex items-center justify-center ${
-                  selectedGate?.id === gate.id ? 'ring-1 ring-blue-500 border-blue-500' : ''
+                  selectedGate?.id === gate.id ? 'ring-1 ring-white border-white' : ''
                 }`}
                 style={{
                   left: `${gate.time * 100 + 26}px`,

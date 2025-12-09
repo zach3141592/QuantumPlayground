@@ -104,7 +104,7 @@ export default function PropertiesPanel({
                   type="text"
                   value={circuitName}
                   onChange={(e) => setCircuitName(e.target.value)}
-                  className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                  className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded text-sm text-white focus:outline-none focus:border-white transition-colors"
                 />
               </div>
               
@@ -118,7 +118,7 @@ export default function PropertiesPanel({
                   max="10"
                   value={circuitQubits}
                   onChange={(e) => setCircuitQubits(parseInt(e.target.value) || 1)}
-                  className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                  className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded text-sm text-white focus:outline-none focus:border-white transition-colors"
                 />
               </div>
               
@@ -252,7 +252,7 @@ export default function PropertiesPanel({
                         onChange={(e) => onGateUpdate(selectedGate.id, {
                           parameters: { ...selectedGate.parameters, angle: parseFloat(e.target.value) || 0 }
                         })}
-                        className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                        className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded text-sm text-white focus:outline-none focus:border-white transition-colors"
                       />
                     </div>
                   </div>
