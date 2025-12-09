@@ -224,8 +224,8 @@ function App() {
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center space-x-3">
-              <div className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded">
-                <Zap className="h-5 w-5 text-white" />
+              <div className="flex items-center justify-center w-8 h-8 bg-white rounded">
+                <Zap className="h-5 w-5 text-black" />
               </div>
               <div>
                 <h1 className="text-lg font-bold text-white tracking-tight">QuantumPlayground</h1>
@@ -296,7 +296,7 @@ function App() {
                 disabled={isAnalyzing}
                 className="btn-secondary text-sm h-9"
               >
-                <Brain className="h-3.5 w-3.5 mr-1.5 text-blue-400" />
+                <Brain className="h-3.5 w-3.5 mr-1.5 text-neutral-400" />
                 <span className="hidden sm:inline">{isAnalyzing ? 'Analyzing...' : 'Analyze'}</span>
               </motion.button>
               
@@ -351,7 +351,7 @@ function App() {
           >
             <div className="card-header flex items-center justify-between border-neutral-800">
               <h2 className="text-lg font-bold text-white flex items-center">
-                <Brain className="w-5 h-5 mr-2 text-blue-500" />
+                <Brain className="w-5 h-5 mr-2 text-white" />
                 Circuit Analysis
               </h2>
               <button
@@ -421,7 +421,7 @@ function App() {
                 <div className="panel bg-neutral-900 border-neutral-800">
                   <div className="panel-header border-neutral-800">
                     <h3 className="text-sm font-semibold text-white flex items-center">
-                      <Lightbulb className="w-4 h-4 mr-2 text-blue-400" />
+                      <Lightbulb className="w-4 h-4 mr-2 text-neutral-400" />
                       AI Suggestions
                     </h3>
                   </div>

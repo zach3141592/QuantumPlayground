@@ -4,8 +4,8 @@
 
 /* Custom CSS Variables */
 :root {
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
+  --primary: #ffffff;
+  --primary-hover: #e5e5e5;
   --surface: #0a0a0a;
   --surface-light: #171717;
   --border: #262626;
@@ -74,7 +74,7 @@ body {
 
 /* Button System */
 .btn-primary {
-  @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-all duration-200 flex items-center justify-center space-x-2 border border-blue-500 hover:border-blue-400;
+  @apply bg-white hover:bg-neutral-200 text-black font-medium py-2 px-4 rounded-md transition-all duration-200 flex items-center justify-center space-x-2 border border-neutral-300 hover:border-neutral-400;
 }
 
 .btn-secondary {
@@ -106,7 +106,7 @@ body {
 
 /* Input System */
 .input {
-  @apply w-full px-4 py-2 bg-neutral-900 border border-neutral-800 rounded-md text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200;
+  @apply w-full px-4 py-2 bg-neutral-900 border border-neutral-800 rounded-md text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all duration-200;
 }
 
 /* Quantum Circuit Specific Styles */
@@ -135,18 +135,18 @@ body {
   box-shadow: 0 0 0 1px var(--primary);
 }
 
-/* Gate Type Variants (Monochrome/Blue accents) */
-.gate-H { border-top: 2px solid #3b82f6; } /* Blue */
-.gate-X { border-top: 2px solid #ffffff; } /* White */
-.gate-Y { border-top: 2px solid #ffffff; } /* White */
-.gate-Z { border-top: 2px solid #ffffff; } /* White */
-.gate-CNOT { border-top: 2px solid #3b82f6; border-radius: 50%; }
-.gate-SWAP { border-top: 2px solid #3b82f6; }
-.gate-RX { border-top: 2px solid #60a5fa; }
-.gate-RY { border-top: 2px solid #60a5fa; }
-.gate-RZ { border-top: 2px solid #60a5fa; }
-.gate-PHASE { border-top: 2px solid #93c5fd; }
-.gate-MEASURE { border-top: 2px solid #525252; background: #262626; }
+/* Gate Type Variants (Monochrome) */
+.gate-H { border-top: 2px solid #ffffff; }
+.gate-X { border-top: 2px solid #ffffff; }
+.gate-Y { border-top: 2px solid #e5e5e5; }
+.gate-Z { border-top: 2px solid #d4d4d4; }
+.gate-CNOT { border-top: 2px solid #a3a3a3; border-radius: 50%; }
+.gate-SWAP { border-top: 2px solid #a3a3a3; }
+.gate-RX { border-top: 2px solid #737373; }
+.gate-RY { border-top: 2px solid #737373; }
+.gate-RZ { border-top: 2px solid #737373; }
+.gate-PHASE { border-top: 2px solid #525252; }
+.gate-MEASURE { border-top: 2px solid #404040; background: #262626; }
 
 /* Scrollbar Styling */
 ::-webkit-scrollbar {

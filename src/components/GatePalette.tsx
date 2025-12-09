@@ -119,7 +119,7 @@ export default function GatePalette({ onGateSelect }: GatePaletteProps) {
             placeholder="Search gates..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-black border border-neutral-800 rounded-md text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full pl-9 pr-4 py-2 bg-black border border-neutral-800 rounded-md text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-white transition-colors"
           />
         </div>
       </div>
@@ -133,7 +133,7 @@ export default function GatePalette({ onGateSelect }: GatePaletteProps) {
                 onClick={() => toggleCategory(category.name)}
               >
                 <div className="flex items-center space-x-2">
-                  <div className="text-blue-500">
+                  <div className="text-white">
                     {category.icon}
                   </div>
                   <h3 className="text-xs font-semibold text-white uppercase tracking-wide">{category.name}</h3>
@@ -189,7 +189,7 @@ export default function GatePalette({ onGateSelect }: GatePaletteProps) {
           <div className="p-3">
             <div className="text-xs text-neutral-400 space-y-2">
               <div className="flex items-start space-x-2">
-                <div className="w-1 h-1 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                <div className="w-1 h-1 bg-white rounded-full mt-1.5 flex-shrink-0"></div>
                 <span>Click a gate to select, then click canvas to place</span>
               </div>
               <div className="flex items-start space-x-2">
