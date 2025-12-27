@@ -1,16 +1,5 @@
 # cursor for building quantum circuits
 
-- **Interactive Circuit Design**: Drag and drop quantum gates onto a visual circuit canvas
-- **Gate Palette**: Comprehensive collection of quantum gates including:
-  - Single-qubit gates: H, X, Y, Z, RX, RY, RZ, Phase
-  - Multi-qubit gates: CNOT, SWAP
-  - Measurement gates
-- **Real-time Properties Panel**: Edit gate parameters and circuit settings
-- **Visual Grid System**: Clear time and qubit organization
-- **Modern UI**: Beautiful dark theme with smooth animations
-- **Circuit Statistics**: Track circuit depth, gate count, and complexity
-- **AI-Powered Analysis**: Get insights and suggestions for your quantum circuits using OpenAI
-
 ## Getting Started
 
 ### Prerequisites
